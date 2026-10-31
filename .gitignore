@@ -1,0 +1,20 @@
+# Build outputs
+build/
+bin/
+obj/
+*.exe
+*.dll
+*.lib
+*.obj
+*.pdb
+*.ilk
+
+# Visual Studio & IDE
+.vs/
+.vscode/
+x64/
+Debug/
+Release/
+
+# Environment and Secrets
+.env

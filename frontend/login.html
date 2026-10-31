@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Subscription Management System</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="logo-group" style="justify-content: center; margin-bottom: 12px;">
+                    <div class="logo-badge">S</div>
+                </div>
+                <h1>Welcome Back</h1>
+                <p>Sign in to your Subscription Management account</p>
+            </div>
+
+            <div id="alertBox" class="alert alert-error" style="display: none;"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="form-control" placeholder="name@domain.com" required autocomplete="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="••••••••••••" required autocomplete="current-password">
+                </div>
+
+                <button type="submit" id="loginBtn" class="btn btn-primary btn-block">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Are you a new customer? <a href="/register.html">Register an account</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Force Password Change Modal (Shown if must_change_password is true) -->
+    <div id="passwordChangeModal" class="modal-overlay" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Set Permanent Password</h3>
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 16px;">
+                Your account was issued a temporary password. You must set a permanent password before proceeding.
+            </p>
+
+            <div id="modalAlertBox" class="alert alert-error" style="display: none;"></div>
+
+            <form id="firstTimePasswordForm">
+                <div class="form-group">
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" class="form-control" required autocomplete="new-password">
+                </div>
+
+                <div class="password-policy-box">
+                    <div id="polLength" class="policy-item">• More than 8 characters</div>
+                    <div id="polUpper" class="policy-item">• At least one uppercase letter (A-Z)</div>
+                    <div id="polLower" class="policy-item">• At least one lowercase letter (a-z)</div>
+                    <div id="polSpecial" class="policy-item">• At least one special character (!@#$%^&*)</div>
+                </div>
+
+                <div class="form-group" style="margin-top: 16px;">
+                    <label for="confirmNewPassword">Confirm New Password</label>
+                    <input type="password" id="confirmNewPassword" class="form-control" required autocomplete="new-password">
+                </div>
+
+                <button type="submit" id="savePasswordBtn" class="btn btn-primary btn-block">
+                    Update Password & Proceed
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const alertBox = document.getElementById('alertBox');
+        const loginBtn = document.getElementById('loginBtn');
+        const passwordModal = document.getElementById('passwordChangeModal');
+        const modalAlertBox = document.getElementById('modalAlertBox');
+        const firstTimePasswordForm = document.getElementById('firstTimePasswordForm');
+        const newPasswordInput = document.getElementById('newPassword');
+
+        // Check password policy as user types
+        newPasswordInput.addEventListener('input', () => {
+            const val = newPasswordInput.value;
+            updatePolicyItem('polLength', val.length > 8);
+            updatePolicyItem('polUpper', /[A-Z]/.test(val));
+            updatePolicyItem('polLower', /[a-z]/.test(val));
+            updatePolicyItem('polSpecial', /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]/.test(val));
+        });
+
+        function updatePolicyItem(id, isValid) {
+            const el = document.getElementById(id);
+            if (isValid) {
+                el.className = 'policy-item valid';
+            } else {
+                el.className = 'policy-item invalid';
+            }
+        }
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            alertBox.style.display = 'none';
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Authenticating...';
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            try {
+                const data = await API.login(email, password);
+                const user = data.user;
+
+                if (user.must_change_password) {
+                    // Show force password change modal
+                    passwordModal.style.display = 'flex';
+                } else {
+                    redirectToDashboard(user.role);
+                }
+            } catch (err) {
+                alertBox.textContent = err.message || 'Login failed. Please check your credentials.';
+                alertBox.style.display = 'flex';
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Sign In';
+            }
+        });
+
+        firstTimePasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            modalAlertBox.style.display = 'none';
+
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmNewPassword').value;
+
+            if (newPass !== confirmPass) {
+                modalAlertBox.textContent = 'Passwords do not match.';
+                modalAlertBox.style.display = 'flex';
+                return;
+            }
+
+            try {
+                await API.changePassword('', newPass);
+                const user = API.getUser();
+                redirectToDashboard(user ? user.role : 'ADMIN');
+            } catch (err) {
+                modalAlertBox.textContent = err.message || 'Failed to update password.';
+                modalAlertBox.style.display = 'flex';
+            }
+        });
+
+        function redirectToDashboard(role) {
+            if (role === 'ADMIN') {
+                window.location.href = '/admin.html';
+            } else if (role === 'STAFF') {
+                window.location.href = '/staff.html';
+            } else if (role === 'CUSTOMER') {
+                window.location.href = '/customer.html';
+            } else {
+                window.location.href = '/login.html';
+            }
+        }
+    </script>
+</body>
+</html>

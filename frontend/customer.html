@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Portal - Subscription Management System</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo-group">
+                <div class="logo-badge">S</div>
+                <div>
+                    <div class="system-title">Subscription Management System</div>
+                    <div class="system-subtitle">Customer Portal</div>
+                </div>
+            </div>
+            <div class="user-nav">
+                <div class="user-info">
+                    <div id="headerUserName" class="user-name">Loading...</div>
+                    <span id="headerUserRole" class="user-role-badge role-customer">CUSTOMER</span>
+                </div>
+                <button id="logoutBtn" class="btn btn-secondary btn-sm">Log Out</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="flex: 1;">
+        <div class="dashboard-title-bar">
+            <div>
+                <h2>My Account</h2>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                    Manage your personal account profile and credentials.
+                </p>
+            </div>
+        </div>
+
+        <div id="actionAlertBox" class="alert alert-success" style="display: none;"></div>
+        <div id="actionErrorBox" class="alert alert-error" style="display: none;"></div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+            <!-- Profile Overview Card -->
+            <div class="table-card" style="padding: 24px;">
+                <h3 style="margin-bottom: 20px; font-size: 1.15rem;">Profile Information</h3>
+
+                <div class="form-group">
+                    <label>Customer Account ID</label>
+                    <div id="profileId" style="font-size: 1.1rem; font-weight: 700; color: var(--accent);">Loading...</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <div id="profileName" style="font-size: 1rem; color: var(--text-primary); font-weight: 600;">Loading...</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Registered Email Address</label>
+                    <div id="profileEmail" style="font-size: 0.95rem; color: var(--text-secondary);">Loading...</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Account Status</label>
+                    <div>
+                        <span id="profileStatus" class="status-badge status-active">ACTIVE</span>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>Member Since</label>
+                    <div id="profileCreated" style="font-size: 0.85rem; color: var(--text-muted);">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Change Password Card -->
+            <div class="table-card" style="padding: 24px;">
+                <h3 style="margin-bottom: 20px; font-size: 1.15rem;">Update Password</h3>
+
+                <form id="customerPasswordForm">
+                    <div class="form-group">
+                        <label for="oldPassword">Current Password</label>
+                        <input type="password" id="oldPassword" class="form-control" required autocomplete="current-password">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" class="form-control" required autocomplete="new-password">
+                        <div class="password-policy-box">
+                            <div id="polLength" class="policy-item">• More than 8 characters</div>
+                            <div id="polUpper" class="policy-item">• At least one uppercase letter (A-Z)</div>
+                            <div id="polLower" class="policy-item">• At least one lowercase letter (a-z)</div>
+                            <div id="polSpecial" class="policy-item">• At least one special character (!@#$%^&*)</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input type="password" id="confirmPassword" class="form-control" required autocomplete="new-password">
+                    </div>
+
+                    <button type="submit" id="savePasswordBtn" class="btn btn-primary btn-block">
+                        Save New Password
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            currentUser = await checkAuth('CUSTOMER');
+            if (currentUser) {
+                loadProfile();
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            API.logout();
+        });
+
+        async function loadProfile() {
+            try {
+                const res = await API.customerGetProfile();
+                const cust = res.customer;
+                document.getElementById('profileId').textContent = `#${cust.user_id}`;
+                document.getElementById('profileName').textContent = cust.name;
+                document.getElementById('profileEmail').textContent = cust.email;
+                document.getElementById('profileStatus').textContent = cust.status;
+                document.getElementById('profileStatus').className = `status-badge ${cust.status === 'ACTIVE' ? 'status-active' : 'status-inactive'}`;
+                document.getElementById('profileCreated').textContent = cust.created_at;
+            } catch (err) {
+                showError(err.message || 'Failed to load customer profile.');
+            }
+        }
+
+        const newPassInput = document.getElementById('newPassword');
+        newPassInput.addEventListener('input', () => {
+            const val = newPassInput.value;
+            updatePolicyItem('polLength', val.length > 8);
+            updatePolicyItem('polUpper', /[A-Z]/.test(val));
+            updatePolicyItem('polLower', /[a-z]/.test(val));
+            updatePolicyItem('polSpecial', /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]/.test(val));
+        });
+
+        function updatePolicyItem(id, isValid) {
+            const el = document.getElementById(id);
+            if (isValid) {
+                el.className = 'policy-item valid';
+            } else {
+                el.className = 'policy-item invalid';
+            }
+        }
+
+        document.getElementById('customerPasswordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearAlerts();
+
+            const oldPass = document.getElementById('oldPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+
+            if (newPass !== confirmPass) {
+                showError('New passwords do not match.');
+                return;
+            }
+
+            try {
+                await API.changePassword(oldPass, newPass);
+                showSuccess('Password updated successfully!');
+                document.getElementById('customerPasswordForm').reset();
+            } catch (err) {
+                showError(err.message || 'Failed to update password.');
+            }
+        });
+
+        function clearAlerts() {
+            document.getElementById('actionAlertBox').style.display = 'none';
+            document.getElementById('actionErrorBox').style.display = 'none';
+        }
+
+        function showSuccess(msg) {
+            const el = document.getElementById('actionAlertBox');
+            el.textContent = msg;
+            el.style.display = 'flex';
+            setTimeout(() => { el.style.display = 'none'; }, 4000);
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('actionErrorBox');
+            el.textContent = msg;
+            el.style.display = 'flex';
+            setTimeout(() => { el.style.display = 'none'; }, 6000);
+        }
+    </script>
+</body>
+</html>

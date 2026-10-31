@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Registration - Subscription Management System</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="logo-group" style="justify-content: center; margin-bottom: 12px;">
+                    <div class="logo-badge">S</div>
+                </div>
+                <h1>Create Account</h1>
+                <p>Register as a new customer to access your portal</p>
+            </div>
+
+            <div id="alertBox" class="alert alert-error" style="display: none;"></div>
+            <div id="successBox" class="alert alert-success" style="display: none;"></div>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" class="form-control" placeholder="Jane Smith" required autocomplete="name">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="form-control" placeholder="name@domain.com" required autocomplete="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="••••••••••••" required autocomplete="new-password">
+                    <div class="password-policy-box">
+                        <div id="polLength" class="policy-item">• More than 8 characters</div>
+                        <div id="polUpper" class="policy-item">• At least one uppercase letter (A-Z)</div>
+                        <div id="polLower" class="policy-item">• At least one lowercase letter (a-z)</div>
+                        <div id="polSpecial" class="policy-item">• At least one special character (!@#$%^&*)</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" class="form-control" placeholder="••••••••••••" required autocomplete="new-password">
+                </div>
+
+                <button type="submit" id="registerBtn" class="btn btn-primary btn-block">
+                    Register Account
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Already have an account? <a href="/login.html">Sign in here</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script>
+        const registerForm = document.getElementById('registerForm');
+        const alertBox = document.getElementById('alertBox');
+        const successBox = document.getElementById('successBox');
+        const registerBtn = document.getElementById('registerBtn');
+        const passwordInput = document.getElementById('password');
+
+        passwordInput.addEventListener('input', () => {
+            const val = passwordInput.value;
+            updatePolicyItem('polLength', val.length > 8);
+            updatePolicyItem('polUpper', /[A-Z]/.test(val));
+            updatePolicyItem('polLower', /[a-z]/.test(val));
+            updatePolicyItem('polSpecial', /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]/.test(val));
+        });
+
+        function updatePolicyItem(id, isValid) {
+            const el = document.getElementById(id);
+            if (isValid) {
+                el.className = 'policy-item valid';
+            } else {
+                el.className = 'policy-item invalid';
+            }
+        }
+
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            alertBox.style.display = 'none';
+            successBox.style.display = 'none';
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Frontend validation checks
+            if (password !== confirmPassword) {
+                alertBox.textContent = 'Passwords do not match.';
+                alertBox.style.display = 'flex';
+                return;
+            }
+
+            if (password.length <= 8 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]/.test(password)) {
+                alertBox.textContent = 'Password does not meet the complexity requirements.';
+                alertBox.style.display = 'flex';
+                return;
+            }
+
+            registerBtn.disabled = true;
+            registerBtn.textContent = 'Registering...';
+
+            try {
+                await API.registerCustomer(name, email, password, confirmPassword);
+                successBox.textContent = 'Account created successfully! Redirecting to login...';
+                successBox.style.display = 'flex';
+                registerForm.reset();
+                setTimeout(() => {
+                    window.location.href = '/login.html';
+                }, 1500);
+            } catch (err) {
+                alertBox.textContent = err.message || 'Registration failed.';
+                alertBox.style.display = 'flex';
+            } finally {
+                registerBtn.disabled = false;
+                registerBtn.textContent = 'Register Account';
+            }
+        });
+    </script>
+</body>
+</html>
