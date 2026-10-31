@@ -31,21 +31,28 @@ struct Subscription
     string status;
 };
 
+
 struct Quotation
 {
     int quotationId;
     int customerId;
     int planId;
+    double amount;
+    string validUntil;
     string status;
 };
+
+
 
 struct Invoice
 {
     int invoiceId;
     int customerId;
     double amount;
+    string dueDate;
     string status;
 };
+
 
 struct Payment
 {
@@ -53,8 +60,10 @@ struct Payment
     int invoiceId;
     double amount;
     string paymentMethod;
+    string paymentDate;
     string status;
 };
+
 
 class CustomerPortal
 {
@@ -66,6 +75,8 @@ public:
     vector<Payment> payments;
 
     CustomerPortal();
+    void acceptQuotation(int customerId, int quotationId);
+    void rejectQuotation(int customerId, int quotationId); 
 
     void viewPlans();
     void viewSubscriptions(int customerId);

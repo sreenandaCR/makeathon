@@ -1,7 +1,9 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Dashboard</title>
     <link rel="stylesheet" href="css/customer.css">
 </head>
@@ -18,17 +20,16 @@
         <p class="menu-title">CUSTOMER MENU</p>
 
         <a href="#" class="active">Dashboard</a>
-       <a href="my-profile.html">My Profile</a>
+        <a href="my-profile.html">My Profile</a>
         <a href="#plans">Products & Plans</a>
         <a href="#subscriptions">My Subscriptions</a>
         <a href="quotations.html">Quotations</a>
         <a href="#invoices">My Invoices</a>
         <a href="#payments">Payment History</a>
 
-        <a href="login.html" class="logout">Logout</a>
+        <a href="#" class="logout" onclick="logout()">Logout</a>
 
     </aside>
-
 
     <!-- MAIN CONTENT -->
     <main class="main-content">
@@ -40,36 +41,34 @@
             </div>
 
             <div class="user-info">
-                <span>Customer</span>
+                <span id="customerName">Loading...</span>
             </div>
         </header>
-
 
         <!-- SUMMARY CARDS -->
         <section class="cards">
 
             <div class="card">
                 <h3>Total Subscriptions</h3>
-                <h2>3</h2>
+                <h2 id="totalSubscriptions">0</h2>
             </div>
 
             <div class="card">
                 <h3>Active Subscriptions</h3>
-                <h2>2</h2>
+                <h2 id="activeSubscriptions">0</h2>
             </div>
 
             <div class="card">
                 <h3>Pending Invoices</h3>
-                <h2>1</h2>
+                <h2 id="pendingInvoices">0</h2>
             </div>
 
             <div class="card">
                 <h3>Total Payments</h3>
-                <h2>₹4,500</h2>
+                <h2 id="totalPayments">₹0</h2>
             </div>
 
         </section>
-
 
         <!-- RECENT SUBSCRIPTIONS -->
         <section class="content-box" id="subscriptions">
@@ -86,25 +85,14 @@
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody id="subscriptionTable">
                     <tr>
-                        <td>Basic Plan</td>
-                        <td>01-10-2026</td>
-                        <td>01-11-2026</td>
-                        <td><span class="status active-status">Active</span></td>
-                    </tr>
-
-                    <tr>
-                        <td>Premium Plan</td>
-                        <td>15-09-2026</td>
-                        <td>15-10-2026</td>
-                        <td><span class="status expired-status">Expired</span></td>
+                        <td colspan="4">Loading subscriptions...</td>
                     </tr>
                 </tbody>
             </table>
 
         </section>
-
 
         <!-- INVOICES -->
         <section class="content-box" id="invoices">
@@ -121,84 +109,318 @@
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody id="invoiceTable">
                     <tr>
-                        <td>INV001</td>
-                        <td>20-10-2026</td>
-                        <td>₹999</td>
-                        <td><span class="status pending-status">Pending</span></td>
-                    </tr>
-
-                    <tr>
-                        <td>INV002</td>
-                        <td>15-10-2026</td>
-                        <td>₹599</td>
-                        <td><span class="status active-status">Paid</span></td>
+                        <td colspan="4">Loading invoices...</td>
                     </tr>
                 </tbody>
             </table>
 
         </section>
 
-
         <!-- PLANS -->
         <section class="content-box" id="plans">
 
             <h2>Available Plans</h2>
 
-            <div class="plans">
-
-                <div class="plan-card">
-                    <h3>Basic</h3>
-                    <h2>₹299/month</h2>
-                    <p>Basic subscription features</p>
-                    <button>View Plan</button>
-                </div>
-
-                <div class="plan-card">
-                    <h3>Standard</h3>
-                    <h2>₹599/month</h2>
-                    <p>More features for growing needs</p>
-                    <button>View Plan</button>
-                </div>
-
-                <div class="plan-card">
-                    <h3>Premium</h3>
-                    <h2>₹999/month</h2>
-                    <p>All premium features</p>
-                    <button>View Plan</button>
-                </div>
-
+            <div class="plans" id="plansContainer">
+                Loading plans...
             </div>
 
         </section>
 
-
         <!-- PROFILE -->
         <section class="content-box" id="profile">
-            <h2>My Profile</h2>
-            <p>Name: Sample Customer</p>
-            <p>Email: customer@example.com</p>
-            <p>Phone: 9876543210</p>
-        </section>
 
+            <h2>My Profile</h2>
+
+            <p id="profileName">Name: Loading...</p>
+            <p id="profileEmail">Email: Loading...</p>
+            <p id="profilePhone">Phone: Loading...</p>
+
+        </section>
 
         <!-- QUOTATIONS -->
         <section class="content-box" id="quotations">
-            <h2>My Quotations</h2>
-            <p>No quotation records available yet.</p>
-        </section>
 
+            <h2>My Quotations</h2>
+
+            <div id="quotationContent">
+                <p>Loading quotations...</p>
+            </div>
+
+        </section>
 
         <!-- PAYMENTS -->
         <section class="content-box" id="payments">
+
             <h2>Payment History</h2>
-            <p>No additional payment records available yet.</p>
+
+            <div id="paymentContent">
+                <p>Loading payments...</p>
+            </div>
+
         </section>
 
     </main>
 
 </div>
+
+<script>
+const API = "http://localhost:18080";
+
+const customerId = localStorage.getItem("customerId");
+
+// Check login
+if (!customerId) {
+    window.location.href = "login.html";
+}
+
+// Logout
+function logout() {
+    localStorage.removeItem("customerId");
+    window.location.href = "login.html";
+}
+
+// Load customer profile
+async function loadProfile() {
+    try {
+        const response = await fetch(
+            `${API}/profile?id=${encodeURIComponent(customerId)}`
+        );
+
+        if (!response.ok) {
+            throw new Error("Profile could not be loaded");
+        }
+
+        const data = await response.text();
+        const details = data.split("\t");
+
+        // Expected response:
+        // ID, Name, Email, Phone
+        const name = details[1] || "Customer";
+        const email = details[2] || "";
+        const phone = details[3] || "";
+
+        document.getElementById("customerName").textContent = name;
+
+        document.getElementById("profileName").textContent =
+            "Name: " + name;
+
+        document.getElementById("profileEmail").textContent =
+            "Email: " + email;
+
+        document.getElementById("profilePhone").textContent =
+            "Phone: " + phone;
+
+    } catch (error) {
+        document.getElementById("customerName").textContent = "Customer";
+        document.getElementById("profileName").textContent =
+            "Unable to load profile";
+    }
+}
+
+// Load subscriptions
+async function loadSubscriptions() {
+    try {
+        const response = await fetch(
+            `${API}/subscriptions?id=${encodeURIComponent(customerId)}`
+        );
+
+        const data = await response.text();
+        const table = document.getElementById("subscriptionTable");
+
+        if (!data.trim()) {
+            table.innerHTML =
+                '<tr><td colspan="4">No subscriptions found.</td></tr>';
+            return;
+        }
+
+        const rows = data.trim().split("\n");
+
+        table.innerHTML = rows.map(row => {
+            const values = row.split("\t");
+
+            return `
+                <tr>
+                    <td>${escapeHTML(values[1] || "")}</td>
+                    <td>${escapeHTML(values[2] || "-")}</td>
+                    <td>${escapeHTML(values[3] || "-")}</td>
+                    <td>${escapeHTML(values[4] || "Pending")}</td>
+                </tr>
+            `;
+        }).join("");
+
+        document.getElementById("totalSubscriptions").textContent =
+            rows.length;
+
+    } catch (error) {
+        document.getElementById("subscriptionTable").innerHTML =
+            '<tr><td colspan="4">Unable to load subscriptions.</td></tr>';
+    }
+}
+
+// Load available plans
+async function loadPlans() {
+    try {
+        const response = await fetch(`${API}/plans`);
+        const data = await response.text();
+
+        const container = document.getElementById("plansContainer");
+
+        if (!data.trim()) {
+            container.textContent = "No plans available.";
+            return;
+        }
+
+        const rows = data.trim().split("\n");
+
+        container.innerHTML = rows.map(row => {
+            const values = row.split("\t");
+
+            const id = values[0] || "";
+            const name = values[1] || "";
+            const price = values[2] || "0";
+            const description = values[3] || "";
+
+            return `
+                <div class="plan-card">
+                    <h3>${escapeHTML(name)}</h3>
+                    <h2>₹${escapeHTML(price)}/month</h2>
+                    <p>${escapeHTML(description)}</p>
+                    <button onclick="requestPlan('${escapeHTML(id)}')">
+                        Request Plan
+                    </button>
+                </div>
+            `;
+        }).join("");
+
+    } catch (error) {
+        document.getElementById("plansContainer").textContent =
+            "Unable to load plans.";
+    }
+}
+
+// Request a subscription
+async function requestPlan(planId) {
+    try {
+        const response = await fetch(`${API}/subscription/request`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams({
+                customerId: customerId,
+                planId: planId
+            })
+        });
+
+        const result = await response.text();
+        alert(result);
+
+        if (response.ok) {
+            loadSubscriptions();
+        }
+
+    } catch (error) {
+        alert("Cannot connect to server.");
+    }
+}
+
+// Load invoices
+async function loadInvoices() {
+    try {
+        const response = await fetch(
+            `${API}/invoices?id=${encodeURIComponent(customerId)}`
+        );
+
+        const data = await response.text();
+        const table = document.getElementById("invoiceTable");
+
+        if (!data.trim()) {
+            table.innerHTML =
+                '<tr><td colspan="4">No invoices found.</td></tr>';
+            return;
+        }
+
+        const rows = data.trim().split("\n");
+
+        table.innerHTML = rows.map(row => {
+            const values = row.split("\t");
+
+            return `
+                <tr>
+                    <td>${escapeHTML(values[0] || "")}</td>
+                    <td>${escapeHTML(values[1] || "-")}</td>
+                    <td>₹${escapeHTML(values[2] || "0")}</td>
+                    <td>${escapeHTML(values[3] || "Pending")}</td>
+                </tr>
+            `;
+        }).join("");
+
+    } catch (error) {
+        document.getElementById("invoiceTable").innerHTML =
+            '<tr><td colspan="4">Unable to load invoices.</td></tr>';
+    }
+}
+
+// Load quotations
+async function loadQuotations() {
+    try {
+        const response = await fetch(
+            `${API}/quotations?id=${encodeURIComponent(customerId)}`
+        );
+
+        const data = await response.text();
+
+        document.getElementById("quotationContent").textContent =
+            data.trim() || "No quotation records available yet.";
+
+    } catch (error) {
+        document.getElementById("quotationContent").textContent =
+            "Unable to load quotations.";
+    }
+}
+
+// Load payments
+async function loadPayments() {
+    try {
+        const response = await fetch(
+            `${API}/payments?id=${encodeURIComponent(customerId)}`
+        );
+
+        const data = await response.text();
+
+        document.getElementById("paymentContent").textContent =
+            data.trim() || "No payment records available yet.";
+
+    } catch (error) {
+        document.getElementById("paymentContent").textContent =
+            "Unable to load payments.";
+    }
+}
+
+// Prevent text from being interpreted as HTML
+function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[character]);
+}
+
+// Load all dashboard information
+if (customerId) {
+    loadProfile();
+    loadSubscriptions();
+    loadPlans();
+    loadInvoices();
+    loadQuotations();
+    loadPayments();
+}
+</script>
 
 </body>
 </html>

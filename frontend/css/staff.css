@@ -1,0 +1,185 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    background: #f4f6f9;
+    color: #263247;
+}
+
+.sidebar {
+    width: 240px;
+    height: 100vh;
+    background: #1c2940;
+    color: white;
+    padding: 25px 15px;
+    position: fixed;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.sidebar button {
+    display: block;
+    width: 100%;
+    padding: 13px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: white;
+    text-align: left;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.sidebar button:hover {
+    background: #344966;
+}
+
+.sidebar .logout {
+    margin-top: 35px;
+    background: #d9534f;
+}
+
+.main {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+    padding: 30px;
+}
+
+header {
+    background: white;
+    padding: 22px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px #00000010;
+}
+
+header p {
+    color: #777;
+    margin-top: 8px;
+}
+
+.section {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px #00000010;
+}
+
+.section h2 {
+    margin-bottom: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+.card {
+    padding: 25px;
+    background: #eaf0fa;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.card p {
+    font-size: 28px;
+    font-weight: bold;
+    color: #315c9b;
+    margin-top: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 13px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background: #1c2940;
+    color: white;
+}
+
+form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+input, select {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    flex: 1;
+    min-width: 150px;
+}
+
+button {
+    cursor: pointer;
+}
+
+.section > button,
+form button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    background: #315c9b;
+    color: white;
+}
+
+@media(max-width: 850px) {
+    .sidebar {
+        width: 170px;
+    }
+
+    .main {
+        margin-left: 170px;
+        width: calc(100% - 170px);
+    }
+
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media(max-width: 550px) {
+    .sidebar {
+        width: 125px;
+        padding: 10px;
+    }
+
+    .sidebar h2 {
+        font-size: 15px;
+    }
+
+    .main {
+        margin-left: 125px;
+        padding: 12px;
+        width: calc(100% - 125px);
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+}

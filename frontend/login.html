@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Login</title>
+    <link rel="stylesheet" href="css/customer.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Welcome Back!</h1>
+        <p>Login to manage your subscriptions.</p>
+
+        <form id="loginForm">
+
+            <label>Email Address</label>
+            <input type="email" id="email"
+                   placeholder="Enter your email" required>
+
+            <label>Password</label>
+            <input type="password" id="password"
+                   placeholder="Enter your password" required>
+
+            <button type="submit">Login</button>
+
+        </form>
+
+        <p>Don't have an account?
+            <a href="customer.html">Register</a>
+        </p>
+
+        <p id="message"></p>
+    </div>
+
+    <script src="js/customer.js"></script>
+
+</body>
+</html>

@@ -64,78 +64,107 @@ int main()
                     cout << "2. Update Profile\n";
                     cout << "3. View Plans\n";
                     cout << "4. Request Subscription\n";
-                    cout << "5. View Subscriptions\n";
-                    cout << "6. View Quotations\n";
-                    cout << "7. View Invoices\n";
-                    cout << "8. View Payment History\n";
-                    cout << "9. Logout\n";
+                  cout << "6. View Quotations\n";
+                  cout << "7. Accept Quotation\n";
+                cout << "8. Reject Quotation\n";
+                 cout << "9. View Invoices\n";
+                 cout << "10. View Payment History\n";
+                 cout << "11. Logout\n";
                     cout << "Enter choice: ";
                     cin >> option;
 
-                    switch (option)
-                    {
-                        case 1:
-                            auth.viewProfile(customerId);
-                            break;
+                    
+switch (option)
+{
+    case 1:
+        auth.viewProfile(customerId);
+        break;
 
-                        case 2:
-                        {
-                            string name, phone;
+    case 2:
+    {
+        string name, phone;
 
-                            cin.ignore();
+        cin.ignore();
 
-                            cout << "Enter new name: ";
-                            getline(cin, name);
+        cout << "Enter new name: ";
+        getline(cin, name);
 
-                            cout << "Enter new phone: ";
-                            getline(cin, phone);
+        cout << "Enter new phone: ";
+        getline(cin, phone);
 
-                            auth.updateProfile(customerId, name, phone);
-                            break;
-                        }
+        auth.updateProfile(customerId, name, phone);
+        break;
+    }
 
-                        case 3:
-                            portal.viewPlans();
-                            break;
+    case 3:
+        portal.viewPlans();
+        break;
 
-                        case 4:
-                        {
-                            int planId;
+    case 4:
+    {
+        int planId;
 
-                            portal.viewPlans();
+        portal.viewPlans();
 
-                            cout << "Enter Plan ID: ";
-                            cin >> planId;
+        cout << "Enter Plan ID: ";
+        cin >> planId;
 
-                            portal.requestSubscription(customerId, planId);
-                            break;
-                        }
+        portal.requestSubscription(customerId, planId);
+        break;
+    }
 
-                        case 5:
-                            portal.viewSubscriptions(customerId);
-                            break;
+    case 5:
+        portal.viewSubscriptions(customerId);
+        break;
 
-                        case 6:
-                            portal.viewQuotations(customerId);
-                            break;
+    case 6:
+        portal.viewQuotations(customerId);
+        break;
 
-                        case 7:
-                            portal.viewInvoices(customerId);
-                            break;
+    case 7:
+    {
+        int quotationId;
 
-                        case 8:
-                            portal.viewPaymentHistory(customerId);
-                            break;
+        portal.viewQuotations(customerId);
 
-                        case 9:
-                            cout << "Logged out successfully!\n";
-                            break;
+        cout << "Enter Quotation ID to accept: ";
+        cin >> quotationId;
 
-                        default:
-                            cout << "Invalid choice!\n";
-                    }
+        portal.acceptQuotation(customerId, quotationId);
+        break;
+    }
 
-                } while (option != 9);
+    case 8:
+    {
+        int quotationId;
+
+        portal.viewQuotations(customerId);
+
+        cout << "Enter Quotation ID to reject: ";
+        cin >> quotationId;
+
+        portal.rejectQuotation(customerId, quotationId);
+        break;
+    }
+
+    case 9:
+        portal.viewInvoices(customerId);
+        break;
+
+    case 10:
+        portal.viewPaymentHistory(customerId);
+        break;
+
+    case 11:
+        cout << "Logged out successfully!\n";
+        break;
+
+    default:
+        cout << "Invalid choice!\n";
+}
+
+
+                } while (option != 11);
             }
         }
         else if (choice == 3)

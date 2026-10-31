@@ -75,19 +75,32 @@ void CustomerPortal::requestSubscription(int customerId, int planId)
     cout << "Subscription request submitted!\n";
 }
 
+
 void CustomerPortal::viewQuotations(int customerId)
 {
     cout << "\n--- MY QUOTATIONS ---\n";
+
     bool found = false;
 
     for (int i = 0; i < quotations.size(); i++)
     {
         if (quotations[i].customerId == customerId)
         {
-            cout << "Quotation ID: "
+            cout << "\nQuotation ID: "
                  << quotations[i].quotationId << endl;
+
+            cout << "Plan ID: "
+                 << quotations[i].planId << endl;
+
+            cout << "Amount: Rs. "
+                 << quotations[i].amount << endl;
+
+            cout << "Valid Until: "
+                 << quotations[i].validUntil << endl;
+
             cout << "Status: "
                  << quotations[i].status << endl;
+
             found = true;
         }
     }
@@ -96,32 +109,46 @@ void CustomerPortal::viewQuotations(int customerId)
         cout << "No quotations found.\n";
 }
 
+
+
 void CustomerPortal::viewInvoices(int customerId)
 {
     cout << "\n--- MY INVOICES ---\n";
+
     bool found = false;
 
     for (int i = 0; i < invoices.size(); i++)
     {
         if (invoices[i].customerId == customerId)
         {
-            cout << "Invoice ID: "
+            cout << "\nInvoice ID: "
                  << invoices[i].invoiceId << endl;
+
             cout << "Amount: Rs. "
                  << invoices[i].amount << endl;
-            cout << "Status: "
+
+            cout << "Due Date: "
+                 << invoices[i].dueDate << endl;
+
+            cout << "Payment Status: "
                  << invoices[i].status << endl;
+
             found = true;
         }
     }
 
     if (!found)
+    {
         cout << "No invoices found.\n";
+    }
 }
+
+
 
 void CustomerPortal::viewPaymentHistory(int customerId)
 {
     cout << "\n--- PAYMENT HISTORY ---\n";
+
     bool found = false;
 
     for (int i = 0; i < payments.size(); i++)
@@ -131,12 +158,21 @@ void CustomerPortal::viewPaymentHistory(int customerId)
             if (payments[i].invoiceId == invoices[j].invoiceId &&
                 invoices[j].customerId == customerId)
             {
-                cout << "Payment ID: "
+                cout << "\nPayment ID: "
                      << payments[i].paymentId << endl;
+
+                cout << "Invoice ID: "
+                     << payments[i].invoiceId << endl;
+
                 cout << "Amount: Rs. "
                      << payments[i].amount << endl;
-                cout << "Method: "
+
+                cout << "Payment Method: "
                      << payments[i].paymentMethod << endl;
+
+                cout << "Payment Date: "
+                     << payments[i].paymentDate << endl;
+
                 cout << "Status: "
                      << payments[i].status << endl;
 
@@ -146,5 +182,54 @@ void CustomerPortal::viewPaymentHistory(int customerId)
     }
 
     if (!found)
+    {
         cout << "No payment records found.\n";
+    }
+}
+
+
+void CustomerPortal::acceptQuotation(int customerId, int quotationId)
+{
+    for (int i = 0; i < quotations.size(); i++)
+    {
+        if (quotations[i].quotationId == quotationId &&
+            quotations[i].customerId == customerId)
+        {
+            if (quotations[i].status != "Pending")
+            {
+                cout << "This quotation cannot be accepted.\n";
+                return;
+            }
+
+            quotations[i].status = "Accepted";
+
+            cout << "Quotation accepted successfully!\n";
+            return;
+        }
+    }
+
+    cout << "Quotation not found!\n";
+}
+
+void CustomerPortal::rejectQuotation(int customerId, int quotationId)
+{
+    for (int i = 0; i < quotations.size(); i++)
+    {
+        if (quotations[i].quotationId == quotationId &&
+            quotations[i].customerId == customerId)
+        {
+            if (quotations[i].status != "Pending")
+            {
+                cout << "This quotation cannot be rejected.\n";
+                return;
+            }
+
+            quotations[i].status = "Rejected";
+
+            cout << "Quotation rejected successfully!\n";
+            return;
+        }
+    }
+
+    cout << "Quotation not found!\n";
 }

@@ -1,49 +1,59 @@
 
-document.getElementById("profileForm").addEventListener("submit", function(event) {
+const API = "http://localhost:18080";
+const customerId = localStorage.getItem("customerId");
 
+const nameInput = document.getElementById("name");
+const emailInput = document.getElementById("email");
+const phoneInput = document.getElementById("phone");
+const form = document.getElementById("profileForm");
+const message = document.getElementById("message");
+
+async function loadProfile() {
+    if (!customerId) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `${API}/profile?id=${encodeURIComponent(customerId)}`
+        );
+
+        if (!response.ok) throw new Error("Unable to load profile");
+
+        const details = (await response.text()).split("\t");
+
+        nameInput.value = details[1] || "";
+        emailInput.value = details[2] || "";
+        phoneInput.value = details[3] || "";
+
+    } catch (error) {
+        message.textContent = "Unable to load profile.";
+    }
+}
+
+form.addEventListener("submit", async function(event) {
     event.preventDefault();
 
-    let name = document.getElementById("profileName").value.trim();
-    let email = document.getElementById("profileEmail").value.trim();
-    let phone = document.getElementById("profilePhone").value.trim();
+    try {
+        const response = await fetch(`${API}/profile/update`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams({
+                id: customerId,
+                name: nameInput.value.trim(),
+                email: emailInput.value.trim(),
+                phone: phoneInput.value.trim()
+            })
+        });
 
-    let message = document.getElementById("profileMessage");
+        message.textContent = await response.text();
 
-    if (name === "" || email === "" || phone === "") {
-        message.textContent = "Please fill all fields.";
-        return;
+    } catch (error) {
+        message.textContent = "Cannot connect to server.";
     }
-
-    message.textContent = "Profile details validated! Backend connection is pending.";
-
 });
 
-
-document.getElementById("passwordForm").addEventListener("submit", function(event) {
-
-    event.preventDefault();
-
-    let current = document.getElementById("currentPassword").value;
-    let newPass = document.getElementById("newPassword").value;
-    let confirm = document.getElementById("confirmNewPassword").value;
-
-    let message = document.getElementById("passwordMessage");
-
-    if (current === "" || newPass === "" || confirm === "") {
-        message.textContent = "Please fill all fields.";
-        return;
-    }
-
-    if (newPass.length < 8) {
-        message.textContent = "New password must contain at least 8 characters.";
-        return;
-    }
-
-    if (newPass !== confirm) {
-        message.textContent = "New passwords do not match!";
-        return;
-    }
-
-    message.textContent = "Password form validated! Backend connection is pending.";
-
-});
+loadProfile();
