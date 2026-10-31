@@ -1,0 +1,266 @@
+// Money is stored as integer minor units (e.g. paise/cents) to avoid float drift.
+// A "+560" variant modifier is therefore stored as 56000.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // switch to "postgresql" for production; String columns below can become native enums
+  url      = env("DATABASE_URL")
+}
+
+// SQLite has no native enums in Prisma; they are String columns validated by Zod
+// and mirrored in src/lib/enums.ts.
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         String   @default("CUSTOMER") // ADMIN | STAFF | CUSTOMER
+  isActive     Boolean  @default(true)
+  createdById  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  subscriptions Subscription[]
+  invoices      Invoice[]
+  resetTokens   PasswordResetToken[]
+
+  @@index([role])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Product {
+  id         String   @id @default(cuid())
+  name       String
+  type       String // SOFTWARE | ADDON | SERVICE
+  salesPrice Int
+  costPrice  Int
+  notes      String?
+  isActive   Boolean  @default(true)
+  taxRuleId  String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  variants          ProductVariant[]
+  taxRule           TaxRule?                @relation(fields: [taxRuleId], references: [id])
+  subscriptionLines SubscriptionLine[]
+  templateLines     QuotationTemplateLine[]
+  discountRules     DiscountRule[]
+
+  @@index([name])
+  @@index([type])
+}
+
+model ProductVariant {
+  id            String  @id @default(cuid())
+  productId     String
+  attribute     String // "Brand"
+  value         String // "Odoo"
+  priceModifier Int // flat +/- in minor units
+  product       Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  lines         SubscriptionLine[]
+
+  @@unique([productId, attribute, value])
+}
+
+model TaxRule {
+  id       String             @id @default(cuid())
+  name     String             @unique // "GST 18%"
+  rateBps  Int // basis points: 18% = 1800
+  isActive Boolean            @default(true)
+  products Product[]
+  lines    SubscriptionLine[]
+}
+
+model Plan {
+  id            String    @id @default(cuid())
+  name          String
+  price         Int // per billing cycle
+  frequency     String // DAILY | WEEKLY | MONTHLY | YEARLY
+  minQuantity   Int       @default(1)
+  availableFrom DateTime
+  availableTo   DateTime?
+  autoClose     Boolean   @default(false)
+  pausable      Boolean   @default(false)
+  closable      Boolean   @default(true)
+  renewable     Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+
+  subscriptions Subscription[]
+  templates     QuotationTemplate[]
+
+  @@index([frequency])
+}
+
+model QuotationTemplate {
+  id           String                  @id @default(cuid())
+  name         String
+  planId       String
+  validityDays Int
+  createdAt    DateTime                @default(now())
+  plan         Plan                    @relation(fields: [planId], references: [id])
+  lines        QuotationTemplateLine[]
+}
+
+model QuotationTemplateLine {
+  id         String            @id @default(cuid())
+  templateId String
+  productId  String
+  quantity   Int
+  template   QuotationTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  product    Product           @relation(fields: [productId], references: [id])
+}
+
+model Subscription {
+  id                  String    @id @default(cuid())
+  number              String    @unique // SUB-2026-000123
+  customerId          String
+  planId              String
+  status              String    @default("DRAFT") // DRAFT|QUOTATION|CONFIRMED|ACTIVE|CLOSED
+  paused              Boolean   @default(false)
+  startDate           DateTime
+  expiryDate          DateTime?
+  paymentTerms        String    @default("NET_15")
+  quotationValidUntil DateTime?
+  nextBillingDate     DateTime? // set on activation, advanced by the billing engine
+  recurringTotal      Int       @default(0) // denormalised per-cycle total (pre-discount) for fast MRR
+  closedAt            DateTime?
+  createdById         String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  customer User               @relation(fields: [customerId], references: [id])
+  plan     Plan               @relation(fields: [planId], references: [id])
+  lines    SubscriptionLine[]
+  invoices Invoice[]
+
+  @@index([status, nextBillingDate])
+  @@index([customerId])
+  @@index([planId])
+}
+
+model SubscriptionLine {
+  id             String          @id @default(cuid())
+  subscriptionId String
+  productId      String
+  variantId      String?
+  taxRuleId      String?
+  quantity       Int
+  unitPrice      Int // product price + variant modifier, frozen at time of adding
+  subscription   Subscription    @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  product        Product         @relation(fields: [productId], references: [id])
+  variant        ProductVariant? @relation(fields: [variantId], references: [id])
+  taxRule        TaxRule?        @relation(fields: [taxRuleId], references: [id])
+
+  @@index([subscriptionId])
+}
+
+model Invoice {
+  id             String    @id @default(cuid())
+  number         String    @unique
+  subscriptionId String
+  customerId     String
+  status         String    @default("DRAFT") // DRAFT|CONFIRMED|PAID|CANCELLED
+  periodStart    DateTime
+  periodEnd      DateTime
+  issueDate      DateTime  @default(now())
+  dueDate        DateTime
+  subtotal       Int
+  discountTotal  Int       @default(0)
+  taxTotal       Int
+  total          Int
+  amountPaid     Int       @default(0)
+  sentAt         DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  subscription Subscription         @relation(fields: [subscriptionId], references: [id])
+  customer     User                 @relation(fields: [customerId], references: [id])
+  lines        InvoiceLine[]
+  payments     Payment[]
+  redemptions  DiscountRedemption[]
+
+  // Idempotency guard: one invoice per subscription per billing period. Prevents double billing.
+  @@unique([subscriptionId, periodStart])
+  @@index([status, dueDate])
+  @@index([customerId])
+}
+
+model InvoiceLine {
+  id          String  @id @default(cuid())
+  invoiceId   String
+  description String
+  quantity    Int
+  unitPrice   Int
+  discount    Int     @default(0)
+  taxRateBps  Int     @default(0)
+  taxAmount   Int     @default(0)
+  total       Int // (qty*unit - discount) + tax
+  invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+}
+
+model Payment {
+  id           String   @id @default(cuid())
+  invoiceId    String
+  method       String // CASH | BANK_TRANSFER | CARD | UPI | CHEQUE
+  amount       Int
+  paidAt       DateTime
+  reference    String?
+  note         String?
+  recordedById String?
+  createdAt    DateTime @default(now())
+  invoice      Invoice  @relation(fields: [invoiceId], references: [id])
+
+  @@index([invoiceId])
+  @@index([paidAt])
+}
+
+model DiscountRule {
+  id              String   @id @default(cuid())
+  name            String
+  type            String // FLAT | PERCENT
+  value           Int // FLAT: minor units. PERCENT: basis points (10% = 1000)
+  scope           String // PRODUCT | SUBSCRIPTION
+  productId       String?
+  minAmount       Int?
+  minQuantity     Int?
+  startsAt        DateTime
+  endsAt          DateTime
+  maxRedemptions  Int?
+  redemptionCount Int      @default(0)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+
+  product     Product?             @relation(fields: [productId], references: [id])
+  redemptions DiscountRedemption[]
+
+  @@index([isActive, startsAt, endsAt])
+}
+
+model DiscountRedemption {
+  id         String       @id @default(cuid())
+  discountId String
+  invoiceId  String
+  amount     Int
+  createdAt  DateTime     @default(now())
+  discount   DiscountRule @relation(fields: [discountId], references: [id])
+  invoice    Invoice      @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@unique([discountId, invoiceId])
+}

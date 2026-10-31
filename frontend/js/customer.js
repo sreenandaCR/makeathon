@@ -1,88 +1,43 @@
 
-const API = "http://localhost:18080";
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Registration</title>
+    <link rel="stylesheet" href="css/customer.css">
+</head>
 
-function encode(data) {
-    return new URLSearchParams(data).toString();
-}
+<body>
 
-// CUSTOMER REGISTRATION
-const registerForm = document.getElementById("registerForm");
+    <div class="container">
 
-if (registerForm) {
-    registerForm.addEventListener("submit", async function(event) {
-        event.preventDefault();
+        <h1>Create Your Account</h1>
+        <p>Register to manage your subscriptions.</p>
 
-        const message = document.getElementById("message");
-        const password = document.getElementById("password").value;
-        const confirmPassword =
-            document.getElementById("confirmPassword").value;
+        <form id="registerForm">
 
-        if (password.length < 8) {
-            message.textContent = "Password must be at least 8 characters.";
-            return;
-        }
+            <label>Full Name</label>
+            <input type="text" id="name" placeholder="Enter your name" required>
 
-        if (password !== confirmPassword) {
-            message.textContent = "Passwords do not match!";
-            return;
-        }
+            <label>Email Address</label>
+            <input type="email" id="email" placeholder="Enter your email" required>
 
-        try {
-            const response = await fetch(API + "/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: encode({
-                    name: document.getElementById("name").value.trim(),
-                    email: document.getElementById("email").value.trim(),
-                    phone: document.getElementById("phone").value.trim(),
-                    password: password
-                })
-            });
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Create a password" required>
 
-            message.textContent = await response.text();
+            <label>Confirm Password</label>
+            <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
 
-            if (response.ok) {
-                registerForm.reset();
-            }
-        } catch (error) {
-            message.textContent = "Cannot connect to server!";
-        }
-    });
-}
+            <button type="submit">Create Account</button>
 
-// CUSTOMER LOGIN
-const loginForm = document.getElementById("loginForm");
+        </form>
 
-if (loginForm) {
-    loginForm.addEventListener("submit", async function(event) {
-        event.preventDefault();
+        <p>Already have an account? <a href="login.html">Login</a></p>
 
-        const message = document.getElementById("message");
+        <p id="message"></p>
 
-        try {
-            const response = await fetch(API + "/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: encode({
-                    email: document.getElementById("email").value.trim(),
-                    password: document.getElementById("password").value
-                })
-            });
+    </div>
 
-            const result = await response.text();
+    <script src="js/customer.js"></script>
 
-            if (response.ok) {
-                localStorage.setItem("customerId", result.trim());
-                window.location.href = "customer-dashboard.html";
-            } else {
-                message.textContent = result;
-            }
-        } catch (error) {
-            message.textContent = "Cannot connect to server!";
-        }
-    });
-}
+</body>
+</html>
