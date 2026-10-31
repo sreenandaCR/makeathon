@@ -1,0 +1,184 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Login</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-box {
+            background: white;
+            padding: 35px;
+            width: 350px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #1e293b;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #message {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-box">
+
+    <h2>Staff Login</h2>
+
+    <form id="loginForm">
+
+        <input
+            type="email"
+            id="email"
+            placeholder="Enter your email"
+            required
+        >
+
+        <input
+            type="password"
+            id="password"
+            placeholder="Enter your password"
+            required
+        >
+
+        <button type="submit">Login</button>
+
+    </form>
+
+    <p id="message"></p>
+
+</div>
+
+<script>
+    const API = "http://localhost:8080/api/staff";
+
+    // Convert password into SHA-256 hexadecimal
+    async function hashPassword(password) {
+
+        const encoder = new TextEncoder();
+
+        const data = encoder.encode(password);
+
+        const hashBuffer = await crypto.subtle.digest(
+            "SHA-256",
+            data
+        );
+
+        const hashArray = Array.from(
+            new Uint8Array(hashBuffer)
+        );
+
+        return hashArray.map(
+            byte => byte.toString(16).padStart(2, "0")
+        ).join("");
+    }
+
+    document.getElementById("loginForm")
+        .addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+
+        const message = document.getElementById("message");
+
+        message.textContent = "Checking login...";
+
+        try {
+
+            const passwordHash = await hashPassword(password);
+
+            const response = await fetch(
+                API + "/login",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        email: email,
+                        passwordHash: passwordHash
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                message.textContent =
+                    data.error || "Login failed";
+                return;
+            }
+
+            // Save the authentication token
+            sessionStorage.setItem("token", data.token);
+
+            message.textContent = "Login successful!";
+
+            // Open staff dashboard
+            window.location.href = "staff.html";
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+            message.textContent =
+                "Cannot connect to server. Check whether backend is running.";
+
+        }
+
+    });
+</script>
+
+</body>
+</html>

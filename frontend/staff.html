@@ -5,21 +5,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Staff Dashboard</title>
-    <link rel="stylesheet" href="staff.css">
+
+    <link rel="stylesheet" href="css/staff.css">
 </head>
+
 <body>
 
 <div class="sidebar">
+
     <h2>STAFF PORTAL</h2>
 
-    <button onclick="showSection('dashboard')">Dashboard</button>
-    <button onclick="showSection('customers')">Customers</button>
-    <button onclick="showSection('subscriptions')">Subscriptions</button>
-    <button onclick="showSection('invoices')">Invoices</button>
-    <button onclick="showSection('payments')">Payments</button>
-    <button onclick="showSection('reports')">Reports</button>
+    <button onclick="showSection('dashboard')">
+        Dashboard
+    </button>
 
-    <button class="logout" onclick="logout()">Logout</button>
+    <button onclick="showSection('customers')">
+        Customers
+    </button>
+
+    <button onclick="showSection('subscriptions')">
+        Subscriptions
+    </button>
+
+    <button onclick="showSection('invoices')">
+        Invoices
+    </button>
+
+    <button onclick="showSection('payments')">
+        Payments
+    </button>
+
+    <button onclick="showSection('reports')">
+        Reports
+    </button>
+
+    <button class="logout" onclick="logout()">
+        Logout
+    </button>
+
 </div>
 
 <div class="main">
@@ -29,10 +52,14 @@
         <p>Welcome, Staff Member</p>
     </header>
 
+    <!-- DASHBOARD -->
+
     <section id="dashboard" class="section">
+
         <h2>Dashboard Overview</h2>
 
         <div class="cards">
+
             <div class="card">
                 <h3>Total Customers</h3>
                 <p id="customerCount">0</p>
@@ -52,15 +79,23 @@
                 <h3>Payments</h3>
                 <p id="paymentCount">0</p>
             </div>
+
         </div>
+
     </section>
 
+    <!-- CUSTOMERS -->
+
     <section id="customers" class="section hidden">
+
         <h2>Customer Management</h2>
 
-        <button onclick="loadCustomers()">Refresh Customers</button>
+        <button onclick="loadCustomers()">
+            Refresh Customers
+        </button>
 
         <table>
+
             <thead>
                 <tr>
                     <th>ID</th>
@@ -69,14 +104,21 @@
                     <th>Phone</th>
                 </tr>
             </thead>
+
             <tbody id="customerTable"></tbody>
+
         </table>
+
     </section>
 
+    <!-- SUBSCRIPTIONS -->
+
     <section id="subscriptions" class="section hidden">
+
         <h2>Subscription Management</h2>
 
         <table>
+
             <thead>
                 <tr>
                     <th>ID</th>
@@ -85,14 +127,21 @@
                     <th>Status</th>
                 </tr>
             </thead>
+
             <tbody id="subscriptionTable"></tbody>
+
         </table>
+
     </section>
 
+    <!-- INVOICES -->
+
     <section id="invoices" class="section hidden">
+
         <h2>Invoice Management</h2>
 
         <table>
+
             <thead>
                 <tr>
                     <th>Invoice ID</th>
@@ -101,43 +150,77 @@
                     <th>Status</th>
                 </tr>
             </thead>
+
             <tbody id="invoiceTable"></tbody>
+
         </table>
+
     </section>
 
+    <!-- PAYMENTS -->
+
     <section id="payments" class="section hidden">
+
         <h2>Record Payment</h2>
 
         <form id="paymentForm">
-            <input type="number" id="invoiceId"
-                   placeholder="Invoice ID" min="1" required>
 
-            <input type="number" id="amount"
-                   placeholder="Amount" min="0.01"
-                   step="0.01" required>
+            <input
+                type="number"
+                id="invoiceId"
+                placeholder="Invoice ID"
+                min="1"
+                required
+            >
+
+            <input
+                type="number"
+                id="amount"
+                placeholder="Amount"
+                min="0.01"
+                step="0.01"
+                required
+            >
 
             <select id="paymentMethod" required>
+
                 <option value="">Select Method</option>
                 <option value="Cash">Cash</option>
                 <option value="UPI">UPI</option>
                 <option value="Card">Card</option>
                 <option value="Bank Transfer">Bank Transfer</option>
+
             </select>
 
-            <button type="submit">Record Payment</button>
+            <button type="submit">
+                Record Payment
+            </button>
+
         </form>
 
         <p id="paymentMessage"></p>
+
     </section>
 
+    <!-- REPORTS -->
+
     <section id="reports" class="section hidden">
+
         <h2>Reports</h2>
-        <button onclick="loadReports()">Generate Report</button>
+
+        <button onclick="loadReports()">
+            Generate Report
+        </button>
+
         <div id="reportResult"></div>
+
     </section>
 
 </div>
 
-<script src="staff.js"></script>
+<!-- JAVASCRIPT -->
+
+<script src="js/staff.js"></script>
+
 </body>
 </html>
