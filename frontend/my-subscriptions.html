@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Subscriptions</title>
+    <link rel="stylesheet" href="css/customer.css">
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <aside class="sidebar">
+        <h2>SUBSCRIPTION HUB</h2>
+
+        <p class="menu-title">CUSTOMER MENU</p>
+
+        <a href="customer-dashboard.html">Dashboard</a>
+        <a href="my-profile.html">My Profile</a>
+        <a href="plans.html">Products & Plans</a>
+        <a href="my-subscriptions.html" class="active">My Subscriptions</a>
+        <a href="quotations.html">Quotations</a>
+        <a href="customer-dashboard.html#invoices">My Invoices</a>
+        <a href="customer-dashboard.html#payments">Payment History</a>
+        <a href="login.html" class="logout">Logout</a>
+    </aside>
+
+
+    <main class="main-content">
+
+        <header>
+            <div>
+                <h1>My Subscriptions</h1>
+                <p>Manage and track your subscriptions.</p>
+            </div>
+        </header>
+
+
+        <!-- SUBSCRIPTION SUMMARY -->
+
+        <section class="cards">
+
+            <div class="card">
+                <h3>Total Subscriptions</h3>
+                <h2>3</h2>
+            </div>
+
+            <div class="card">
+                <h3>Active</h3>
+                <h2>1</h2>
+            </div>
+
+            <div class="card">
+                <h3>Pending</h3>
+                <h2>1</h2>
+            </div>
+
+            <div class="card">
+                <h3>Closed</h3>
+                <h2>1</h2>
+            </div>
+
+        </section>
+
+
+        <!-- SUBSCRIPTION TABLE -->
+
+        <section class="content-box">
+
+            <h2>Subscription Details</h2>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Plan</th>
+                        <th>Price</th>
+                        <th>Start Date</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody id="subscriptionTable">
+
+                    <tr>
+                        <td>SUB001</td>
+                        <td>Basic Plan</td>
+                        <td>₹299</td>
+                        <td>01-10-2026</td>
+                        <td>01-11-2026</td>
+                        <td><span class="status active-status">Active</span></td>
+                        <td>
+                            <button onclick="requestRenewal('SUB001')">
+                                Renew
+                            </button>
+                            <button onclick="requestCancellation('SUB001')">
+                                Cancel
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>SUB002</td>
+                        <td>Standard Plan</td>
+                        <td>₹599</td>
+                        <td>10-10-2026</td>
+                        <td>10-11-2026</td>
+                        <td><span class="status pending-status">Quotation</span></td>
+                        <td>Awaiting confirmation</td>
+                    </tr>
+
+                    <tr>
+                        <td>SUB003</td>
+                        <td>Premium Plan</td>
+                        <td>₹999</td>
+                        <td>01-08-2026</td>
+                        <td>01-09-2026</td>
+                        <td><span class="status expired-status">Closed</span></td>
+                        <td>Completed</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+
+        <p id="subscriptionMessage"></p>
+
+    </main>
+
+</div>
+
+<script src="js/subscriptions.js"></script>
+
+</body>
+</html>

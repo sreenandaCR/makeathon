@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Quotations</title>
+    <link rel="stylesheet" href="css/customer.css">
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <aside class="sidebar">
+        <h2>SUBSCRIPTION HUB</h2>
+
+        <p class="menu-title">CUSTOMER MENU</p>
+
+        <a href="customer-dashboard.html">Dashboard</a>
+        <a href="my-profile.html">My Profile</a>
+        <a href="plans.html">Products & Plans</a>
+        <a href="my-subscriptions.html">My Subscriptions</a>
+        <a href="quotations.html" class="active">Quotations</a>
+        <a href="my-invoices.html">My Invoices</a>
+        <a href="payment-history.html">Payment History</a>
+        <a href="login.html" class="logout">Logout</a>
+    </aside>
+
+
+    <main class="main-content">
+
+        <header>
+            <div>
+                <h1>My Quotations</h1>
+                <p>Review and manage your subscription quotations.</p>
+            </div>
+        </header>
+
+
+        <section class="cards">
+
+            <div class="card">
+                <h3>Total Quotations</h3>
+                <h2>3</h2>
+            </div>
+
+            <div class="card">
+                <h3>Pending</h3>
+                <h2>1</h2>
+            </div>
+
+            <div class="card">
+                <h3>Accepted</h3>
+                <h2>1</h2>
+            </div>
+
+            <div class="card">
+                <h3>Rejected</h3>
+                <h2>1</h2>
+            </div>
+
+        </section>
+
+
+        <section class="content-box">
+
+            <h2>Quotation Details</h2>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Quotation ID</th>
+                        <th>Plan</th>
+                        <th>Date</th>
+                        <th>Valid Until</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>QUO001</td>
+                        <td>Basic Plan</td>
+                        <td>20-10-2026</td>
+                        <td>05-11-2026</td>
+                        <td>₹352.82</td>
+                        <td>
+                            <span class="status pending-status">Pending</span>
+                        </td>
+                        <td>
+                            <button onclick="acceptQuotation('QUO001')">
+                                Accept
+                            </button>
+
+                            <button onclick="rejectQuotation('QUO001')">
+                                Reject
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>QUO002</td>
+                        <td>Standard Plan</td>
+                        <td>10-10-2026</td>
+                        <td>25-10-2026</td>
+                        <td>₹706.82</td>
+                        <td>
+                            <span class="status active-status">Accepted</span>
+                        </td>
+                        <td>Completed</td>
+                    </tr>
+
+                    <tr>
+                        <td>QUO003</td>
+                        <td>Premium Plan</td>
+                        <td>01-09-2026</td>
+                        <td>15-09-2026</td>
+                        <td>₹1178.82</td>
+                        <td>
+                            <span class="status expired-status">Rejected</span>
+                        </td>
+                        <td>Closed</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+        <p id="quotationMessage"></p>
+
+    </main>
+
+</div>
+
+<script src="js/quotations.js"></script>
+
+</body>
+</html>

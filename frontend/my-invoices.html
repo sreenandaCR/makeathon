@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Invoices</title>
+    <link rel="stylesheet" href="css/customer.css">
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <aside class="sidebar">
+        <h2>SUBSCRIPTION HUB</h2>
+
+        <p class="menu-title">CUSTOMER MENU</p>
+
+        <a href="customer-dashboard.html">Dashboard</a>
+      <a href="my-profile.html">My Profile</a>
+        <a href="plans.html">Products & Plans</a>
+        <a href="my-subscriptions.html">My Subscriptions</a>
+        <a href="quotations.html">Quotations</a>
+        <a href="my-invoices.html" class="active">My Invoices</a>
+        <a href="customer-dashboard.html#payments">Payment History</a>
+        <a href="login.html" class="logout">Logout</a>
+    </aside>
+
+
+    <main class="main-content">
+
+        <header>
+            <div>
+                <h1>My Invoices</h1>
+                <p>View and manage your subscription invoices.</p>
+            </div>
+        </header>
+
+
+        <!-- SUMMARY CARDS -->
+
+        <section class="cards">
+
+            <div class="card">
+                <h3>Total Invoices</h3>
+                <h2>3</h2>
+            </div>
+
+            <div class="card">
+                <h3>Paid Invoices</h3>
+                <h2>1</h2>
+            </div>
+
+            <div class="card">
+                <h3>Pending Invoices</h3>
+                <h2>1</h2>
+            </div>
+
+            <div class="card">
+                <h3>Overdue Invoices</h3>
+                <h2>1</h2>
+            </div>
+
+        </section>
+
+
+        <!-- INVOICE TABLE -->
+
+        <section class="content-box">
+
+            <h2>Invoice Details</h2>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Invoice ID</th>
+                        <th>Date</th>
+                        <th>Plan</th>
+                        <th>Subtotal</th>
+                        <th>GST (18%)</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>INV001</td>
+                        <td>01-10-2026</td>
+                        <td>Basic Plan</td>
+                        <td>₹299</td>
+                        <td>₹53.82</td>
+                        <td>₹352.82</td>
+                        <td><span class="status active-status">Paid</span></td>
+                        <td>
+                            <button onclick="viewInvoice('INV001')">
+                                View
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>INV002</td>
+                        <td>15-10-2026</td>
+                        <td>Standard Plan</td>
+                        <td>₹599</td>
+                        <td>₹107.82</td>
+                        <td>₹706.82</td>
+                        <td><span class="status pending-status">Pending</span></td>
+                        <td>
+                            <button onclick="viewInvoice('INV002')">
+                                View
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>INV003</td>
+                        <td>01-09-2026</td>
+                        <td>Premium Plan</td>
+                        <td>₹999</td>
+                        <td>₹179.82</td>
+                        <td>₹1178.82</td>
+                        <td><span class="status expired-status">Overdue</span></td>
+                        <td>
+                            <button onclick="viewInvoice('INV003')">
+                                View
+                            </button>
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+
+        <p id="invoiceMessage"></p>
+
+    </main>
+
+</div>
+
+<script src="js/invoices.js"></script>
+
+</body>
+</html>

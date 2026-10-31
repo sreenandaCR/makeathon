@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Products & Plans</title>
+    <link rel="stylesheet" href="css/customer.css">
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h2>SUBSCRIPTION HUB</h2>
+
+        <p class="menu-title">CUSTOMER MENU</p>
+
+        <a href="customer-dashboard.html">Dashboard</a>
+        <a href="#profile">My Profile</a>
+        <a href="plans.html" class="active">Products & Plans</a>
+        <a href="customer-dashboard.html#subscriptions">My Subscriptions</a>
+        <a href="customer-dashboard.html#quotations">Quotations</a>
+        <a href="customer-dashboard.html#invoices">My Invoices</a>
+        <a href="customer-dashboard.html#payments">Payment History</a>
+        <a href="login.html" class="logout">Logout</a>
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header>
+            <div>
+                <h1>Products & Subscription Plans</h1>
+                <p>Explore our available subscription plans.</p>
+            </div>
+        </header>
+
+
+        <!-- BILLING CYCLE -->
+        <section class="content-box">
+
+            <h2>Choose Your Billing Cycle</h2>
+
+            <select id="billingCycle" onchange="changePrices()">
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+            </select>
+
+        </section>
+
+
+        <!-- PLANS -->
+        <section class="plans-page">
+
+            <div class="plan-card">
+                <h3>Basic Plan</h3>
+
+                <h2 class="price" data-monthly="299" data-yearly="2990">
+                    ₹299/month
+                </h2>
+
+                <p>Suitable for individual users.</p>
+
+                <ul>
+                    <li>Basic features</li>
+                    <li>Email support</li>
+                    <li>Limited usage</li>
+                </ul>
+
+                <button onclick="selectPlan('Basic Plan')">
+                    Select Plan
+                </button>
+            </div>
+
+
+            <div class="plan-card popular">
+                <h3>Standard Plan</h3>
+
+                <h2 class="price" data-monthly="599" data-yearly="5990">
+                    ₹599/month
+                </h2>
+
+                <p>Suitable for growing businesses.</p>
+
+                <ul>
+                    <li>All Basic features</li>
+                    <li>Priority support</li>
+                    <li>Higher usage limits</li>
+                </ul>
+
+                <button onclick="selectPlan('Standard Plan')">
+                    Select Plan
+                </button>
+            </div>
+
+
+            <div class="plan-card">
+                <h3>Premium Plan</h3>
+
+                <h2 class="price" data-monthly="999" data-yearly="9990">
+                    ₹999/month
+                </h2>
+
+                <p>For users who need advanced features.</p>
+
+                <ul>
+                    <li>All Standard features</li>
+                    <li>Premium support</li>
+                    <li>Advanced features</li>
+                </ul>
+
+                <button onclick="selectPlan('Premium Plan')">
+                    Select Plan
+                </button>
+            </div>
+
+        </section>
+
+        <p id="planMessage"></p>
+
+    </main>
+
+</div>
+
+<script src="js/plans.js"></script>
+
+</body>
+</html>

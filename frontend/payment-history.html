@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment History</title>
+    <link rel="stylesheet" href="css/customer.css">
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <aside class="sidebar">
+        <h2>SUBSCRIPTION HUB</h2>
+
+        <p class="menu-title">CUSTOMER MENU</p>
+
+        <a href="customer-dashboard.html">Dashboard</a>
+        <a href="my-profile.html">My Profile</a>
+        <a href="plans.html">Products & Plans</a>
+        <a href="my-subscriptions.html">My Subscriptions</a>
+        <a href="customer-dashboard.html#quotations">Quotations</a>
+        <a href="my-invoices.html">My Invoices</a>
+        <a href="payment-history.html" class="active">Payment History</a>
+        <a href="login.html" class="logout">Logout</a>
+    </aside>
+
+
+    <main class="main-content">
+
+        <header>
+            <div>
+                <h1>Payment History</h1>
+                <p>Track all your subscription payments.</p>
+            </div>
+        </header>
+
+
+        <!-- SUMMARY -->
+
+        <section class="cards">
+
+            <div class="card">
+                <h3>Total Payments</h3>
+                <h2>3</h2>
+            </div>
+
+            <div class="card">
+                <h3>Successful</h3>
+                <h2>2</h2>
+            </div>
+
+            <div class="card">
+                <h3>Pending</h3>
+                <h2>1</h2>
+            </div>
+
+            <div class="card">
+                <h3>Total Paid</h3>
+                <h2>₹2,000</h2>
+            </div>
+
+        </section>
+
+
+        <!-- PAYMENT TABLE -->
+
+        <section class="content-box">
+
+            <h2>Transaction Details</h2>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Payment ID</th>
+                        <th>Invoice ID</th>
+                        <th>Date</th>
+                        <th>Payment Method</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>PAY001</td>
+                        <td>INV001</td>
+                        <td>02-10-2026</td>
+                        <td>UPI</td>
+                        <td>₹352.82</td>
+                        <td>
+                            <span class="status active-status">
+                                Successful
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>PAY002</td>
+                        <td>INV002</td>
+                        <td>16-10-2026</td>
+                        <td>Debit Card</td>
+                        <td>₹706.82</td>
+                        <td>
+                            <span class="status active-status">
+                                Successful
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>PAY003</td>
+                        <td>INV003</td>
+                        <td>20-10-2026</td>
+                        <td>UPI</td>
+                        <td>₹999</td>
+                        <td>
+                            <span class="status pending-status">
+                                Pending
+                            </span>
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

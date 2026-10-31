@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Dashboard</title>
+    <link rel="stylesheet" href="css/customer.css">
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <h2>SUBSCRIPTION HUB</h2>
+
+        <p class="menu-title">CUSTOMER MENU</p>
+
+        <a href="#" class="active">Dashboard</a>
+       <a href="my-profile.html">My Profile</a>
+        <a href="#plans">Products & Plans</a>
+        <a href="#subscriptions">My Subscriptions</a>
+        <a href="quotations.html">Quotations</a>
+        <a href="#invoices">My Invoices</a>
+        <a href="#payments">Payment History</a>
+
+        <a href="login.html" class="logout">Logout</a>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header>
+            <div>
+                <h1>Customer Dashboard</h1>
+                <p>Welcome back! Manage your subscriptions here.</p>
+            </div>
+
+            <div class="user-info">
+                <span>Customer</span>
+            </div>
+        </header>
+
+
+        <!-- SUMMARY CARDS -->
+        <section class="cards">
+
+            <div class="card">
+                <h3>Total Subscriptions</h3>
+                <h2>3</h2>
+            </div>
+
+            <div class="card">
+                <h3>Active Subscriptions</h3>
+                <h2>2</h2>
+            </div>
+
+            <div class="card">
+                <h3>Pending Invoices</h3>
+                <h2>1</h2>
+            </div>
+
+            <div class="card">
+                <h3>Total Payments</h3>
+                <h2>₹4,500</h2>
+            </div>
+
+        </section>
+
+
+        <!-- RECENT SUBSCRIPTIONS -->
+        <section class="content-box" id="subscriptions">
+
+            <h2>My Recent Subscriptions</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Plan</th>
+                        <th>Start Date</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>Basic Plan</td>
+                        <td>01-10-2026</td>
+                        <td>01-11-2026</td>
+                        <td><span class="status active-status">Active</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>Premium Plan</td>
+                        <td>15-09-2026</td>
+                        <td>15-10-2026</td>
+                        <td><span class="status expired-status">Expired</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </section>
+
+
+        <!-- INVOICES -->
+        <section class="content-box" id="invoices">
+
+            <h2>Recent Invoices</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Invoice ID</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>INV001</td>
+                        <td>20-10-2026</td>
+                        <td>₹999</td>
+                        <td><span class="status pending-status">Pending</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>INV002</td>
+                        <td>15-10-2026</td>
+                        <td>₹599</td>
+                        <td><span class="status active-status">Paid</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </section>
+
+
+        <!-- PLANS -->
+        <section class="content-box" id="plans">
+
+            <h2>Available Plans</h2>
+
+            <div class="plans">
+
+                <div class="plan-card">
+                    <h3>Basic</h3>
+                    <h2>₹299/month</h2>
+                    <p>Basic subscription features</p>
+                    <button>View Plan</button>
+                </div>
+
+                <div class="plan-card">
+                    <h3>Standard</h3>
+                    <h2>₹599/month</h2>
+                    <p>More features for growing needs</p>
+                    <button>View Plan</button>
+                </div>
+
+                <div class="plan-card">
+                    <h3>Premium</h3>
+                    <h2>₹999/month</h2>
+                    <p>All premium features</p>
+                    <button>View Plan</button>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PROFILE -->
+        <section class="content-box" id="profile">
+            <h2>My Profile</h2>
+            <p>Name: Sample Customer</p>
+            <p>Email: customer@example.com</p>
+            <p>Phone: 9876543210</p>
+        </section>
+
+
+        <!-- QUOTATIONS -->
+        <section class="content-box" id="quotations">
+            <h2>My Quotations</h2>
+            <p>No quotation records available yet.</p>
+        </section>
+
+
+        <!-- PAYMENTS -->
+        <section class="content-box" id="payments">
+            <h2>Payment History</h2>
+            <p>No additional payment records available yet.</p>
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>
