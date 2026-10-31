@@ -1,48 +1,109 @@
 
 #include "customer_auth.h"
-#include <iostream>
 
-using namespace std;
+CustomerAuth::CustomerAuth()
+{
+    nextCustomerId = 1;
+}
 
 bool CustomerAuth::registerCustomer(
-    string name,
-    string email,
-    string password,
-    string phone)
+    string name, string email, string password, string phone)
 {
     if (name.empty() || email.empty() ||
         password.empty() || phone.empty())
     {
-        cout << "All fields are required!" << endl;
+        cout << "All fields are required!\n";
         return false;
     }
 
     if (password.length() < 8)
     {
-        cout << "Password must contain at least 8 characters!" << endl;
+        cout << "Password must contain at least 8 characters!\n";
         return false;
     }
 
-    cout << "Customer registration details validated!" << endl;
+    // Check whether email already exists
+    for (int i = 0; i < customers.size(); i++)
+    {
+        if (customers[i].email == email)
+        {
+            cout << "Email already registered!\n";
+            return false;
+        }
+    }
 
-    // Database insertion will be implemented later.
+    Customer newCustomer;
+
+    newCustomer.customerId = nextCustomerId++;
+    newCustomer.name = name;
+    newCustomer.email = email;
+    newCustomer.phone = phone;
+
+    customers.push_back(newCustomer);
+    passwords.push_back(password);
+
+    cout << "Registration successful!\n";
+    cout << "Your Customer ID is: "
+         << newCustomer.customerId << endl;
 
     return true;
 }
 
-bool CustomerAuth::loginCustomer(
-    string email,
-    string password)
+int CustomerAuth::loginCustomer(string email, string password)
 {
-    if (email.empty() || password.empty())
+    for (int i = 0; i < customers.size(); i++)
     {
-        cout << "Email and password are required!" << endl;
-        return false;
+        if (customers[i].email == email &&
+            passwords[i] == password)
+        {
+            cout << "Login successful!\n";
+            return customers[i].customerId;
+        }
     }
 
-    cout << "Customer login request received!" << endl;
+    cout << "Invalid email or password!\n";
+    return -1;
+}
 
-    // Database authentication will be implemented later.
+void CustomerAuth::viewProfile(int customerId)
+{
+    for (int i = 0; i < customers.size(); i++)
+    {
+        if (customers[i].customerId == customerId)
+        {
+            cout << "\n--- CUSTOMER PROFILE ---\n";
+            cout << "Customer ID: "
+                 << customers[i].customerId << endl;
+            cout << "Name: " << customers[i].name << endl;
+            cout << "Email: " << customers[i].email << endl;
+            cout << "Phone: " << customers[i].phone << endl;
+            return;
+        }
+    }
 
-    return false;
+    cout << "Customer not found!\n";
+}
+
+void CustomerAuth::updateProfile(
+    int customerId, string name, string phone)
+{
+    for (int i = 0; i < customers.size(); i++)
+    {
+        if (customers[i].customerId == customerId)
+        {
+            if (name.empty() || phone.empty())
+            {
+                cout << "Name and phone cannot be empty!\n";
+                return;
+            }
+
+            customers[i].name = name;
+            customers[i].phone = phone;
+
+            cout << "Profile updated successfully!\n";
+            return;
+        }
+    }
+
+    cout << "Customer not found!\n";
 }

@@ -1,59 +1,150 @@
 
 #include "customer.h"
-#include <iostream>
 
-using namespace std;
-
-void Customer::registerCustomer(
-    string name,
-    string email,
-    string phone)
+CustomerPortal::CustomerPortal()
 {
-    this->name = name;
-    this->email = email;
-    this->phone = phone;
-
-    cout << "\nCustomer registered successfully!" << endl;
+    // Temporary sample plans
+    plans.push_back({1, "Basic", 299, "Monthly"});
+    plans.push_back({2, "Standard", 599, "Monthly"});
+    plans.push_back({3, "Premium", 999, "Monthly"});
 }
 
-void Customer::viewProfile()
+void CustomerPortal::viewPlans()
 {
-    cout << "\n--- CUSTOMER PROFILE ---" << endl;
+    cout << "\n--- AVAILABLE PLANS ---\n";
 
-    cout << "Name: " << name << endl;
-    cout << "Email: " << email << endl;
-    cout << "Phone: " << phone << endl;
+    for (int i = 0; i < plans.size(); i++)
+    {
+        cout << plans[i].planId << ". "
+             << plans[i].planName
+             << " - Rs. " << plans[i].price
+             << "/" << plans[i].duration << endl;
+    }
 }
 
-void Customer::updateProfile(
-    string name,
-    string phone)
+void CustomerPortal::viewSubscriptions(int customerId)
 {
-    this->name = name;
-    this->phone = phone;
+    cout << "\n--- MY SUBSCRIPTIONS ---\n";
+    bool found = false;
 
-    cout << "\nProfile updated successfully!" << endl;
+    for (int i = 0; i < subscriptions.size(); i++)
+    {
+        if (subscriptions[i].customerId == customerId)
+        {
+            cout << "Subscription ID: "
+                 << subscriptions[i].subscriptionId << endl;
+            cout << "Plan ID: "
+                 << subscriptions[i].planId << endl;
+            cout << "Status: "
+                 << subscriptions[i].status << endl;
+
+            found = true;
+        }
+    }
+
+    if (!found)
+        cout << "No subscriptions found.\n";
 }
 
-void Customer::viewPlans()
+void CustomerPortal::requestSubscription(int customerId, int planId)
 {
-    cout << "\n--- AVAILABLE SUBSCRIPTION PLANS ---" << endl;
+    bool planExists = false;
 
-    cout << "1. Basic Plan - Rs. 299/month" << endl;
-    cout << "2. Standard Plan - Rs. 599/month" << endl;
-    cout << "3. Premium Plan - Rs. 999/month" << endl;
+    for (int i = 0; i < plans.size(); i++)
+    {
+        if (plans[i].planId == planId)
+        {
+            planExists = true;
+            break;
+        }
+    }
+
+    if (!planExists)
+    {
+        cout << "Invalid plan ID!\n";
+        return;
+    }
+
+    subscriptions.push_back({
+        (int)subscriptions.size() + 1,
+        customerId,
+        planId,
+        "Pending"
+    });
+
+    cout << "Subscription request submitted!\n";
 }
 
-void Customer::viewSubscriptions()
+void CustomerPortal::viewQuotations(int customerId)
 {
-    cout << "\n--- MY SUBSCRIPTIONS ---" << endl;
+    cout << "\n--- MY QUOTATIONS ---\n";
+    bool found = false;
 
-    cout << "No subscription records available yet." << endl;
+    for (int i = 0; i < quotations.size(); i++)
+    {
+        if (quotations[i].customerId == customerId)
+        {
+            cout << "Quotation ID: "
+                 << quotations[i].quotationId << endl;
+            cout << "Status: "
+                 << quotations[i].status << endl;
+            found = true;
+        }
+    }
+
+    if (!found)
+        cout << "No quotations found.\n";
 }
 
-void Customer::viewPaymentHistory()
+void CustomerPortal::viewInvoices(int customerId)
 {
-    cout << "\n--- PAYMENT HISTORY ---" << endl;
+    cout << "\n--- MY INVOICES ---\n";
+    bool found = false;
 
-    cout << "No payment records available yet." << endl;
+    for (int i = 0; i < invoices.size(); i++)
+    {
+        if (invoices[i].customerId == customerId)
+        {
+            cout << "Invoice ID: "
+                 << invoices[i].invoiceId << endl;
+            cout << "Amount: Rs. "
+                 << invoices[i].amount << endl;
+            cout << "Status: "
+                 << invoices[i].status << endl;
+            found = true;
+        }
+    }
+
+    if (!found)
+        cout << "No invoices found.\n";
+}
+
+void CustomerPortal::viewPaymentHistory(int customerId)
+{
+    cout << "\n--- PAYMENT HISTORY ---\n";
+    bool found = false;
+
+    for (int i = 0; i < payments.size(); i++)
+    {
+        for (int j = 0; j < invoices.size(); j++)
+        {
+            if (payments[i].invoiceId == invoices[j].invoiceId &&
+                invoices[j].customerId == customerId)
+            {
+                cout << "Payment ID: "
+                     << payments[i].paymentId << endl;
+                cout << "Amount: Rs. "
+                     << payments[i].amount << endl;
+                cout << "Method: "
+                     << payments[i].paymentMethod << endl;
+                cout << "Status: "
+                     << payments[i].status << endl;
+
+                found = true;
+            }
+        }
+    }
+
+    if (!found)
+        cout << "No payment records found.\n";
 }

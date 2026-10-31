@@ -2,42 +2,77 @@
 #ifndef CUSTOMER_H
 #define CUSTOMER_H
 
+#include <iostream>
 #include <string>
+#include <vector>
 using namespace std;
 
-class Customer
+struct Customer
 {
-private:
     int customerId;
     string name;
     string email;
     string phone;
+};
 
+struct Plan
+{
+    int planId;
+    string planName;
+    double price;
+    string duration;
+};
+
+struct Subscription
+{
+    int subscriptionId;
+    int customerId;
+    int planId;
+    string status;
+};
+
+struct Quotation
+{
+    int quotationId;
+    int customerId;
+    int planId;
+    string status;
+};
+
+struct Invoice
+{
+    int invoiceId;
+    int customerId;
+    double amount;
+    string status;
+};
+
+struct Payment
+{
+    int paymentId;
+    int invoiceId;
+    double amount;
+    string paymentMethod;
+    string status;
+};
+
+class CustomerPortal
+{
 public:
-    // Register customer
-    void registerCustomer(
-        string name,
-        string email,
-        string phone
-    );
+    vector<Plan> plans;
+    vector<Subscription> subscriptions;
+    vector<Quotation> quotations;
+    vector<Invoice> invoices;
+    vector<Payment> payments;
 
-    // Display customer details
-    void viewProfile();
+    CustomerPortal();
 
-    // Update customer details
-    void updateProfile(
-        string name,
-        string phone
-    );
-
-    // View available subscription plans
     void viewPlans();
-
-    // View customer subscriptions
-    void viewSubscriptions();
-
-    // View payment history
-    void viewPaymentHistory();
+    void viewSubscriptions(int customerId);
+    void requestSubscription(int customerId, int planId);
+    void viewQuotations(int customerId);
+    void viewInvoices(int customerId);
+    void viewPaymentHistory(int customerId);
 };
 
 #endif

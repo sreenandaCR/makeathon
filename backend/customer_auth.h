@@ -2,27 +2,28 @@
 #ifndef CUSTOMER_AUTH_H
 #define CUSTOMER_AUTH_H
 
+#include "customer.h"
+#include <vector>
 #include <string>
 using namespace std;
 
 class CustomerAuth
 {
+private:
+    vector<Customer> customers;
+    int nextCustomerId;
+    vector<string> passwords;
+
 public:
+    CustomerAuth();
 
-    // Customer registration
-    bool registerCustomer(
-        string name,
-        string email,
-        string password,
-        string phone
-    );
+    bool registerCustomer(string name, string email,
+                          string password, string phone);
 
-    // Customer login
-    bool loginCustomer(
-        string email,
-        string password
-    );
+    int loginCustomer(string email, string password);
 
+    void viewProfile(int customerId);
+    void updateProfile(int customerId, string name, string phone);
 };
 
 #endif
